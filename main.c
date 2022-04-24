@@ -1,3 +1,4 @@
+
 //
 //  palavras.c
 //
@@ -15,25 +16,34 @@
 
 /*Menu Help*/
 
-int DEFAULT_GAME=1;
+int DEFAULT_GAME = 1;
 
-void help(char *programa)
-{
-    printf("Palavras Cruzadas.\n\n");
-    printf("Utilizaçao: %s [opçoes]\n", programa);
-    printf("Opçoes validas:\n");
-    printf("[-h]\t\t   ajuda para o utilizador\n");
-    printf("[-t [linha]x[coluna]]\t   define a dimensao do tabuleiro de jogo. O valor pre-definido vai é 9x9\n");
-    printf("[-d (FILENAME)]\t   define o ficheiro dicionario a usar\n");
-    printf("[-l (FILENAME)]\t   define o ficheiro com as letras restringidas, usadas no modo de jogo 3 e 4\n");
-    printf("[-m (5-20)]\t   define o numero maximo de letras que o jogador pode ter na mao, so aplicável nos modos de jogo 3 e 4\n");
-    printf("[-n (nn)]\t   define o numero maximo de jogadas, pre-definido valor 0\n");
-    printf("[-i (FILENAME)]\t   define o nome do ficheiro que contem o tabuleiro que o jogador quer utilizar para o jogo,a dimensao deste definida previamente em -t\n");
-    printf("[-j (0-4)]\t   define o modo de jogo (por omissao, o modo de jogo e %d)\n", DEFAULT_GAME);
-    printf("[-o (FILENAME)]\t   define o ficheiro para escrever e guardar o tabuleiro final\n");
-    printf("[-r (FILENAME)]\t   define o ficheiro para guardar o registo das jogadas possiveis, apenas para os modos de jogo 1 2 e 3. Por omissao, não ha registo\n");
+void help(char *programa) {
+  printf("Palavras Cruzadas.\n\n");
+  printf("Utilizaçao: %s [opçoes]\n", programa);
+  printf("Opçoes validas:\n");
+  printf("[-h]\t\t   ajuda para o utilizador\n");
+  printf("[-t [linha]x[coluna]]\t   define a dimensao do tabuleiro de jogo. O "
+         "valor pre-definido vai é 9x9\n");
+  printf("[-d (FILENAME)]\t   define o ficheiro dicionario a usar\n");
+  printf("[-l (FILENAME)]\t   define o ficheiro com as letras restringidas, "
+         "usadas no modo de jogo 3 e 4\n");
+  printf("[-m (5-20)]\t   define o numero maximo de letras que o jogador pode "
+         "ter na mao, so aplicável nos modos de jogo 3 e 4\n");
+  printf("[-n (nn)]\t   define o numero maximo de jogadas, pre-definido valor "
+         "0\n");
+  printf("[-i (FILENAME)]\t   define o nome do ficheiro que contem o tabuleiro "
+         "que o jogador quer utilizar para o jogo,a dimensao deste definida "
+         "previamente em -t\n");
+  printf("[-j (0-4)]\t   define o modo de jogo (por omissao, o modo de jogo e "
+         "%d)\n",
+         DEFAULT_GAME);
+  printf("[-o (FILENAME)]\t   define o ficheiro para escrever e guardar o "
+         "tabuleiro final\n");
+  printf("[-r (FILENAME)]\t   define o ficheiro para guardar o registo das "
+         "jogadas possiveis, apenas para os modos de jogo 1 2 e 3. Por "
+         "omissao, não ha registo\n");
 }
-
 
 // Pre-formatacao do tabuleiro
 void pre_formatacao(int colunas_total, int linhas_total, int tamanho_tabuleiro,
@@ -47,9 +57,15 @@ void pre_formatacao(int colunas_total, int linhas_total, int tamanho_tabuleiro,
           (linha <= linha_index - 2)) {
         dados[linha][coluna][0] = '.';
         dados[linha][coluna][1] = '1';
+        dados[linha][coluna][4] = '.';
+          dados[linha][coluna][5] = '0';
+          dados[linha][coluna][6] = '0';
       } else {
         dados[linha][coluna][0] = ' ';
+          dados[linha][coluna][4] = ' ';
         dados[linha][coluna][1] = '0';
+          dados[linha][coluna][5] = ' ';
+          dados[linha][coluna][6] = ' ';
       }
     }
   }
@@ -410,7 +426,7 @@ void Insere_jogada_tabuleiro(int N_jogada, int tamanho_tabuleiro,
       dados[linha_inicial][i + coluna_inicial + 3][0] = jogada_conteudo[i];
     }
   }
-
+  fflush(stdout);
   if (orientacao_jogada == 'v' || orientacao_jogada == 'V') {
     for (int i = 0; i < tamanho_palavra; i++) {
       dados[i + linha_inicial][coluna_inicial + 3][0] = jogada_conteudo[i];
@@ -446,6 +462,7 @@ void contabilizacao_de_pontos(int N_jogada, int tamanho_tabuleiro,
       case 's':
       case 't':
       case 'u':
+      case 'n':
         dados[linha_inicial][i + coluna_inicial + 3][2] = '1';
         break;
         //               letras que contam 2
@@ -513,6 +530,7 @@ void contabilizacao_de_pontos(int N_jogada, int tamanho_tabuleiro,
       case 's':
       case 't':
       case 'u':
+      case 'n':
         dados[i + linha_inicial][coluna_inicial + 3][2] = '1';
         break;
         //               letras que contam 2
@@ -593,9 +611,10 @@ void impressao_pontuacao(int N_jogada, int tamanho_tabuleiro,
           (int)dados[linha_inicial][i + coluna_inicial + 3][3];
     }
     for (int i = 0; i < tamanho_palavra; i++) {
-      if ((i + coluna_inicial + 3 == 3 ||
+        int c=(int)(dados[linha_inicial][coluna_inicial +i+ 3][0]);
+        if (((c<(65))||((c>90)&&(c<97))||(c>122))&&((i + coluna_inicial + 3 == 3 ||
            i + coluna_inicial + 3 == coluna_index) &&
-          (linha_inicial == 0 || linha_inicial == linha_index - 2)) {
+          (linha_inicial == 0 || linha_inicial == linha_index - 2)))  {
         multiplicador_palavra = multiplicador_palavra * 2;
       }
     }
@@ -608,17 +627,17 @@ void impressao_pontuacao(int N_jogada, int tamanho_tabuleiro,
           (int)dados[i + linha_inicial][coluna_inicial + 3][3];
     }
     for (int i = 0; i < tamanho_palavra; i++) {
-      if ((coluna_inicial + 3 == 3 || coluna_inicial + 3 == coluna_index) &&
-          (i + linha_inicial == 0 || i + linha_inicial == linha_index - 2)) {
+        int c=(int)(dados[linha_inicial+i][coluna_inicial + 3][0]);
+        if (((c<(65))||((c>90)&&(c<97))||(c>122))&&((coluna_inicial + 3 == 3 ||
+           coluna_inicial + 3 == coluna_index) &&
+          (linha_inicial+i == 0 || linha_inicial+i == linha_index - 2))) {
         multiplicador_palavra = multiplicador_palavra * 2;
       }
     }
   }
   *pontuacao_jogada = (multiplicador_palavra * pontuacao_da_palavra);
-  if (modo_de_jogo == 1) {
     *pontuacao_total =
         *pontuacao_total + (multiplicador_palavra * pontuacao_da_palavra);
-  }
 }
 
 //                               FUNÇÕES DE ANALISE DO ALGORITMO
@@ -633,34 +652,41 @@ int validacao_possivel_da_jogada(int N_jogada, int tamanho_tabuleiro,
                                  char dados[linhas_total][colunas_total][7],
                                  char erros[6]) {
   int linha_inicial, coluna_inicial, linha_index, coluna_index, tamanho_palavra,
-      validade = 0, validade_dos_caracteres = 0, validade_das_posicoes = 0,
+      validade = 0, validade_dos_caracteres = 0, validade_das_posicoes = 0,casa_central=0,
       igualdade_caracteres = 0;
-  linha_index = linhas_total - 1;
+    for (int c=0;c<6; c++) {
+        erros[c]=0;
+    }
+    linha_index = linhas_total - 1;
   coluna_index = colunas_total - 1;
   tamanho_palavra = strlen(jogada_conteudo);
   coluna_inicial = ((int)tolower(Coluna_jogada)) - 97;
   linha_inicial = Linha_jogada - 1;
   //    Se é horizontal:
-
+  
   if (orientacao_jogada == 'h' || orientacao_jogada == 'H') {
 
+      
     //        TESTE DOS DIFERENTES CRITERIOS:
-    if ((coluna_inicial <= 3) && (coluna_inicial >= coluna_index) &&
-        (linha_inicial <= 0) && (linha_inicial >= linha_index - 2)) {
-      return 0;
+    if ((coluna_inicial >= 0) && (coluna_inicial <= coluna_index) &&
+        (linha_inicial >= 0) && (linha_inicial <= linha_index - 2)) {
+      validade++;
     }
 
     if (N_jogada == 1) {
       // A primeira jogada esta na casa central
-      if (coluna_inicial != 3 + ((tamanho_tabuleiro - 1) / 2) &&
-          linha_inicial != ((tamanho_tabuleiro - 1) / 2)) {
-        return 0;
-      } else {
+        //passa na casa central
+        for (int i = 0; i < tamanho_palavra; i++) {
+          if ((linha_inicial==((tamanho_tabuleiro - 1) / 2))&&(coluna_inicial+i + 3==3 + ((tamanho_tabuleiro - 1) / 2)))
+          {casa_central++;}}
+            if (casa_central==1) {
+                validade++;
+            } else {
         erros[0] = '1';
       }
       // 1 : Cabe no tabuleiro
-      if ((Coluna_jogada + tamanho_palavra - 1 <= 'A' + tamanho_tabuleiro) ||
-          (Coluna_jogada + tamanho_palavra - 1 <= 'a' + tamanho_tabuleiro)) {
+      if ((Coluna_jogada + tamanho_palavra - 1 <= 'A' + tamanho_tabuleiro-1) ||
+          (Coluna_jogada + tamanho_palavra - 1 <= 'a' + tamanho_tabuleiro-1)) {
         validade++;
       } else {
         erros[1] = '1';
@@ -696,7 +722,7 @@ int validacao_possivel_da_jogada(int N_jogada, int tamanho_tabuleiro,
         erros[4] = '1';
       }
 
-      if (validade == 4) {
+      if (validade == 6) {
         return 1;
       } else {
         return 0;
@@ -704,7 +730,7 @@ int validacao_possivel_da_jogada(int N_jogada, int tamanho_tabuleiro,
     }
 
     else {
-      if ((coluna_inicial <= 3) && (coluna_inicial >= coluna_index) &&
+      if ((coluna_inicial <= 0) && (coluna_inicial >= coluna_index-3) &&
           (linha_inicial <= 0) && (linha_inicial >= linha_index - 2)) {
         return 0;
       }
@@ -724,7 +750,7 @@ int validacao_possivel_da_jogada(int N_jogada, int tamanho_tabuleiro,
           return 0;
         }
       }
-      if (igualdade_caracteres > 0) {
+      if ((igualdade_caracteres > 0)&&(igualdade_caracteres!=tamanho_palavra)) {
         validade++;
       } else {
         erros[5] = '1';
@@ -767,7 +793,7 @@ int validacao_possivel_da_jogada(int N_jogada, int tamanho_tabuleiro,
         erros[4] = '1';
       }
 
-      if (validade == 5) {
+      if (validade == 6) {
         return 1;
       } else {
         return 0;
@@ -778,19 +804,23 @@ int validacao_possivel_da_jogada(int N_jogada, int tamanho_tabuleiro,
   else if (orientacao_jogada == 'v' || orientacao_jogada == 'V') {
 
     if (N_jogada == 1) {
-      if ((coluna_inicial <= 3) && (coluna_inicial >= coluna_index) &&
-          (linha_inicial <= 0) && (linha_inicial >= linha_index - 2)) {
-        return 0;
-      }
-
-      if (coluna_inicial != 3 + ((tamanho_tabuleiro - 1) / 2) &&
-          linha_inicial != ((tamanho_tabuleiro - 1) / 2)) {
-        return 0;
-      } else {
+       //começa dentro do tabuleiro
+        if ((coluna_inicial >= 0) && (coluna_inicial <= coluna_index-3) &&
+            (linha_inicial >= 0) && (linha_inicial <= linha_index - 2)) {
+            validade++;}
+        //passa na casa central
+        for (int i = 0; i < tamanho_palavra; i++) {
+          if ((i + linha_inicial==((tamanho_tabuleiro - 1) / 2))&&(coluna_inicial + 3==3 + ((tamanho_tabuleiro - 1) / 2)))
+          {casa_central++;}}
+            if (casa_central==1) {
+                validade++;
+            }
+    
+else {
         erros[0] = '1';
       }
       // 1 : Cabe no tabuleiro
-      if (linha_inicial + tamanho_palavra - 1 <= linha_index) {
+      if (linha_inicial + tamanho_palavra - 1 <= linha_index-2) {
         validade++;
       } else {
         erros[1] = '1';
@@ -826,7 +856,7 @@ int validacao_possivel_da_jogada(int N_jogada, int tamanho_tabuleiro,
         erros[4] = '1';
       }
 
-      if (validade == 4) {
+      if (validade == 6) {
         return 1;
       } else {
         return 0;
@@ -835,10 +865,9 @@ int validacao_possivel_da_jogada(int N_jogada, int tamanho_tabuleiro,
 
     else {
       // 1 : Tem pelo menos um caracter igual;
-      if ((coluna_inicial <= 3) && (coluna_inicial >= coluna_index) &&
-          (linha_inicial <= 0) && (linha_inicial >= linha_index - 2)) {
-        return 0;
-      }
+        if ((coluna_inicial >= 0) && (coluna_inicial <= coluna_index) &&
+            (linha_inicial >= 0) && (linha_inicial <= linha_index - 2)) {
+            validade++;}
 
       for (int i = 0; i < tamanho_palavra; i++) {
         if (dados[i + linha_inicial][coluna_inicial + 3][0] ==
@@ -846,7 +875,7 @@ int validacao_possivel_da_jogada(int N_jogada, int tamanho_tabuleiro,
           igualdade_caracteres++;
         }
       }
-      if (igualdade_caracteres > 0) {
+      if ((igualdade_caracteres > 0)&&(igualdade_caracteres!=tamanho_palavra)) {
         validade++;
       } else {
         erros[5] = '1';
@@ -860,7 +889,7 @@ int validacao_possivel_da_jogada(int N_jogada, int tamanho_tabuleiro,
         }
       }
       // 2 : Cabe no tabuleiro
-      if (linha_inicial + tamanho_palavra - 1 <= linha_index) {
+      if (linha_inicial + tamanho_palavra - 1 <= linha_index-2) {
         validade++;
       } else {
         erros[1] = '1';
@@ -896,7 +925,7 @@ int validacao_possivel_da_jogada(int N_jogada, int tamanho_tabuleiro,
         erros[4] = '1';
       }
 
-      if (validade == 5) {
+      if (validade == 6) {
         return 1;
       } else {
         return 0;
@@ -920,12 +949,12 @@ void contabilizacao_possivel_pontos(
   coluna_index = colunas_total - 1;
   tamanho_palavra = strlen(jogada_conteudo);
   coluna_inicial = ((int)tolower(Coluna_jogada)) - 97;
-  linha_inicial = Linha_jogada - 1;
+  linha_inicial = Linha_jogada-1 ;
 
   if (orientacao_jogada == 'h' || orientacao_jogada == 'H') {
     for (int i = 0; i < tamanho_palavra; i++) {
       switch (tolower(jogada_conteudo[i])) {
-        //               letras que contam 1
+        //                   letras que contam 1
       case 'a':
       case 'e':
       case 'i':
@@ -935,6 +964,7 @@ void contabilizacao_possivel_pontos(
       case 's':
       case 't':
       case 'u':
+      case 'n':
         dados[linha_inicial][i + coluna_inicial + 3][5] = '1';
         break;
         //               letras que contam 2
@@ -980,8 +1010,8 @@ void contabilizacao_possivel_pontos(
 
     for (int i = 0; i < tamanho_palavra; i++) {
       dados[linha_inicial][i + coluna_inicial + 3][6] =
-          ((int)(dados[linha_inicial][i + coluna_inicial + 3][1]) - 48) *
-          ((int)(dados[linha_inicial][i + coluna_inicial + 3][5]) - 48);
+          (char)((((int)(dados[linha_inicial][i + coluna_inicial + 3][1]) - 48) *
+          ((int)(dados[linha_inicial][i + coluna_inicial + 3][5]) - 48))+48);
     }
   }
 
@@ -998,6 +1028,7 @@ void contabilizacao_possivel_pontos(
       case 's':
       case 't':
       case 'u':
+      case 'n':
         dados[i + linha_inicial][coluna_inicial + 3][5] = '1';
         break;
         //               letras que contam 2
@@ -1043,8 +1074,8 @@ void contabilizacao_possivel_pontos(
 
     for (int i = 0; i < tamanho_palavra; i++) {
       dados[i + linha_inicial][coluna_inicial + 3][6] =
-          ((int)(dados[i + linha_inicial][coluna_inicial + 3][5]) - 48) *
-          ((int)(dados[i + linha_inicial][coluna_inicial + 3][1]) - 48);
+          (char)((((int)(dados[i + linha_inicial][coluna_inicial + 3][5]) - 48) *
+          ((int)(dados[i + linha_inicial][coluna_inicial + 3][1]) - 48))+48);
     }
   }
 }
@@ -1071,26 +1102,26 @@ void pontuacao_jogada_possivel(int N_jogada, int tamanho_tabuleiro,
     for (int i = 0; i < tamanho_palavra; i++) {
       pontuacao_da_palavra =
           pontuacao_da_palavra +
-          (int)dados[linha_inicial][i + coluna_inicial + 3][6];
+          (int)(dados[linha_inicial][i + coluna_inicial + 3][6])-48;
     }
     for (int i = 0; i < tamanho_palavra; i++) {
-      if ((i + coluna_inicial + 3 == 3 ||
+        int c=(int)(dados[linha_inicial][coluna_inicial +i+ 3][0]);
+        if (((c<(65))||((c>90)&&(c<97))||(c>122))&&((i + coluna_inicial + 3 == 3 ||
            i + coluna_inicial + 3 == coluna_index) &&
-          (linha_inicial == 0 || linha_inicial == linha_index - 2)) {
+          (linha_inicial == 0 || linha_inicial == linha_index - 2))) {
         multiplicador_palavra = multiplicador_palavra * 2;
       }
     }
   }
-
   if (orientacao_jogada == 'v' || orientacao_jogada == 'V') {
     for (int i = 0; i < tamanho_palavra; i++) {
       pontuacao_da_palavra =
           pontuacao_da_palavra +
-          (int)dados[i + linha_inicial][coluna_inicial + 3][6];
+          (int)(dados[i + linha_inicial][coluna_inicial + 3][6])-48;
     }
     for (int i = 0; i < tamanho_palavra; i++) {
-      if ((coluna_inicial + 3 == 3 || coluna_inicial + 3 == coluna_index) &&
-          (i + linha_inicial == 0 || i + linha_inicial == linha_index - 2)) {
+        int c=(int)(dados[linha_inicial+i][coluna_inicial + 3][0]);
+      if (((c<65)||((c>90)&&(c<97))||(c>122))&&((coluna_inicial + 3 == 3 || coluna_inicial + 3 == coluna_index) && (i + linha_inicial == 0 || i + linha_inicial == linha_index - 2))) {
         multiplicador_palavra = multiplicador_palavra * 2;
       }
     }
@@ -1109,19 +1140,23 @@ void Insere_possivel_jogada_tabuleiro(
   tamanho_palavra = strlen(jogada_conteudo);
   coluna_inicial = ((int)tolower(Coluna_jogada)) - 97;
   linha_inicial = Linha_jogada - 1;
-
   if (orientacao_jogada == 'h' || orientacao_jogada == 'H') {
     for (int i = 0; i < tamanho_palavra; i++) {
-      dados[linha_inicial][i + coluna_inicial + 3][4] = jogada_conteudo[i];
+        dados[linha_inicial][i + coluna_inicial + 3][4] = jogada_conteudo[i];
+      
     }
   }
-
+    
+  
   if (orientacao_jogada == 'v' || orientacao_jogada == 'V') {
     for (int i = 0; i < tamanho_palavra; i++) {
-      dados[i + linha_inicial][coluna_inicial + 3][4] = jogada_conteudo[i];
+        
+        dados[i + linha_inicial][coluna_inicial + 3][4] = jogada_conteudo[i];
+   
     }
-  }
+   }
 }
+
 
 // Remove posivel jogada no tabuleiro
 void remove_posivel_jogada_tabuleiro(
@@ -1136,23 +1171,22 @@ void remove_posivel_jogada_tabuleiro(
   coluna_inicial = ((int)tolower(Coluna_jogada)) - 97;
   linha_inicial = Linha_jogada - 1;
 
-  if (orientacao_jogada == 'h' || orientacao_jogada == 'H') {
-    for (int i = 0; i < tamanho_palavra; i++) {
-      dados[linha_inicial][i + coluna_inicial + 3][4] = ' ';
-      dados[linha_inicial][i + coluna_inicial + 3][5] = '0';
-      dados[linha_inicial][i + coluna_inicial + 3][6] = '0';
-    }
-  }
-
-  if (orientacao_jogada == 'v' || orientacao_jogada == 'V') {
-    for (int i = 0; i < tamanho_palavra; i++) {
-      dados[i + linha_inicial][coluna_inicial + 3][4] = ' ';
-      dados[i + linha_inicial][coluna_inicial + 3][5] = '0';
-      dados[i + linha_inicial][coluna_inicial + 3][6] = '0';
-    }
-  }
+    linha_index = linhas_total - 1;
+    coluna_index = colunas_total - 1;
+    for (int linha = 0; linha <= linha_index; linha++) {
+      for (int coluna = 0; coluna <= coluna_index; coluna++) {
+        if ((coluna >= 3) && (coluna <= coluna_index) && (linha >= 0) &&
+            (linha <= linha_index - 2)) {
+          dados[linha][coluna][4] = '.';
+            dados[linha][coluna][5] = '0';
+            dados[linha][coluna][6] = '0';
+        } else {
+            dados[linha][coluna][4] = ' ';
+            dados[linha][coluna][5] = ' ';
+            dados[linha][coluna][6] = ' ';
+        }
 }
-
+    }}
 // fim do jogo
 int fim_do_jogo(int tamanho_tabuleiro, char jogada_conteudo[], int Linha_jogada,
                 char orientacao_jogada, char Coluna_jogada, int colunas_total,
@@ -1195,7 +1229,7 @@ char **carregar_ficheiro(char *File_dicionario, int *N_Colunas_DIC) {
     }
     if (i == tamanho_dinamico) {
       tamanho_dinamico += Tamanho_realocacao;
-      char **linhasRE = realloc(linhas, tamanho_dinamico * sizeof(char *));
+      char **linhasRE = (char **)realloc(linhas, tamanho_dinamico * sizeof(char *));
       if (!linhasRE) {
         printf("Nao foi possivel realocar a memoria");
       }
@@ -1203,7 +1237,7 @@ char **carregar_ficheiro(char *File_dicionario, int *N_Colunas_DIC) {
     }
     for (int a = 0; a < 100; a++) {
       if (leitura[a] == (char)39) {
-        leitura[a] = '\0';
+        leitura[a] = '\t';
         int b;
         for (b = a + 1; b < 100; b++) {
           leitura[b] = '\0';
@@ -1347,11 +1381,10 @@ char **Criar_array_casas(int *N_casas_total) {
 char **Insere_casa_possivel_array(char **casas_possiveis, int *N_casas_total,
                                   int coluna, int linha, char orientacao) {
   int i;
-  char casa[3];
+  char casa[4];
   casa[0] = (char)coluna;
   casa[1] = (char)linha;
   casa[2] = orientacao;
-  printf("%s ", casa);
   i = *N_casas_total;
   int tamanho_dinamico = Tamanho_realocacao;
   if (i == tamanho_dinamico) {
@@ -1366,7 +1399,6 @@ char **Insere_casa_possivel_array(char **casas_possiveis, int *N_casas_total,
   char *palavra = (char *)malloc(3 * sizeof(char));
   strcpy(palavra, casa);
   casas_possiveis[i] = palavra;
-  printf(" %s", casas_possiveis[i]);
   i++;
   *N_casas_total = i;
 
@@ -1410,8 +1442,8 @@ void Marcar_casas(int N_jogada, char *Coluna_jogada, char *orientacao_jogada,
       for (int coluna = 0; coluna < tamanho_tabuleiro; coluna++) {
         int c1 = dados[linha_inicial + linha][coluna + coluna_inicial + 3][0];
         if ((c1 >= 65 && c1 <= 90) || (c1 >= 97 && c1 <= 122)) {
-          int linha1 = linha_inicial + linha;
-          int coluna1 = coluna + coluna_inicial;
+          int linha1 ='a'+linha_inicial + linha;
+          int coluna1 ='a'+ coluna + coluna_inicial;
           casas_possiveis =
               Insere_casa_possivel_array(casas_possiveis, N_casas_total,
                                          coluna1, linha1, *orientacao_jogada);
@@ -1436,14 +1468,12 @@ void Marcar_casas(int N_jogada, char *Coluna_jogada, char *orientacao_jogada,
   } else {
     for (int linha = 0; linha < tamanho_tabuleiro; linha++) {
       for (int coluna = 0; coluna < tamanho_tabuleiro; coluna++) {
-        int c1 = dados[linha_inicial + linha][coluna + coluna_inicial + 3][0];
         int c2 = dados[linha_inicial + linha][coluna + coluna_inicial + 2][0];
-        int c3 = dados[linha_inicial + linha][coluna + coluna_inicial + 4][0];
-        if (((c1 >= 65 && c1 <= 90) || (c1 >= 97 && c1 <= 122)) ||
-            ((c2 >= 65 && c2 <= 90) || (c2 >= 97 && c2 <= 122)) ||
-            ((c3 >= 65 && c3 <= 90) || (c3 >= 97 && c3 <= 122))) {
-          int linha1 = linha_inicial + linha;
-          int coluna1 = coluna + coluna_inicial;
+        if (
+            ((c2 >= 65 && c2 <= 90) || (c2 >= 97 && c2 <= 122))
+           ) {
+          int linha1 = 'a'+linha_inicial + linha;
+          int coluna1 = 'a'+coluna + coluna_inicial;
           casas_possiveis =
               Insere_casa_possivel_array(casas_possiveis, N_casas_total,
                                          coluna1, linha1, *orientacao_jogada);
@@ -1451,42 +1481,52 @@ void Marcar_casas(int N_jogada, char *Coluna_jogada, char *orientacao_jogada,
       }
     }
   }
-
-  for (int i = 0; i < *N_casas_total; i++) {
-    printf("\n%s\n", casas_possiveis[i]);
-  }
 }
 
 // Analise das casas
-void analise_casas(char **casas_possiveis, int N_casas_total, int N_Colunas_DIC,
+char* analise_casas(char **casas_possiveis, int N_casas_total, int N_Colunas_DIC,
                    char **Coluna_DIC, int *N_total_jogadas_possiveis,
                    char **Jogadas_Possiveis, int N_jogada,
                    int tamanho_tabuleiro, char *jogada_conteudo,
                    int *Linha_jogada, char *orientacao_jogada,
                    char *Coluna_jogada, int colunas_total, int linhas_total,
                    char dados[linhas_total][colunas_total][7], char erros[6],
-                   int modo_de_jogo, int *N_jogada_array) {
+                    int modo_de_jogo, int *N_jogada_array, int registo_jogadas_ativo) {
   char casa[4];
   int pontuacao_jogada = 0;
+    int igualdade_jogada=0;
   // melhor jogada
   char Coluna_jogada_Max = 'c';
   char orientacao_jogada_Max = 'h';
   int Linha_jogada_Max = 0;
   int pontuacao_jogada_Max = 0;
-  char jogada_conteudo_Max[15] = {0};
-  jogada_conteudo = (char *)malloc((16) * sizeof(char));
+  char jogada_conteudo_Max[16] ;
+  jogada_conteudo = (char *)malloc((20) * sizeof(char));
 
-  for (int x = 0; x < N_Colunas_DIC - 1; x++) {
-    memcpy(jogada_conteudo, Coluna_DIC[x], strlen(Coluna_DIC[x]));
-    printf("%s\n", jogada_conteudo);
 
-    for (int i = 0; i < N_casas_total + 1; i++) {
+  for (int x = 0; x < N_Colunas_DIC-1; x++) {
+      for (int g=0; g<20; g++) {
+          jogada_conteudo[g]='\0';
+      }
+      memcpy(jogada_conteudo, Coluna_DIC[x], strlen(Coluna_DIC[x]));
+    //ver se a palavra é igual á anterior
+      int igualdade_caracteres=0;
+      igualdade_jogada=0;
+      if (x>0) {
+      for (int i = 0; i < strlen(jogada_conteudo); i++) {
+          if (Coluna_DIC[x-1][i] ==jogada_conteudo[i]) {
+          igualdade_caracteres++;
+          }}
+          if ((igualdade_caracteres==strlen(jogada_conteudo))&&(strlen(jogada_conteudo)==strlen(Coluna_DIC[x-1]))){
+              igualdade_jogada=1;
+          }
+      }
+      if ((strlen(jogada_conteudo)<=tamanho_tabuleiro)&&(igualdade_jogada==0)) {
+    for (int i = 0; i < N_casas_total; i++) {
       memcpy(casa, casas_possiveis[i], 3);
-      printf("%s\n", casas_possiveis[i]);
       *Coluna_jogada = casa[0];
       *Linha_jogada = (int)casa[1] - 96;
       *orientacao_jogada = casa[2];
-
       if (*orientacao_jogada == 'h' || *orientacao_jogada == 'H') {
         int comprimento_da_palavra = strlen(jogada_conteudo);
         for (int b = 0; b < comprimento_da_palavra; b++) {
@@ -1499,7 +1539,7 @@ void analise_casas(char **casas_possiveis, int N_casas_total, int N_Colunas_DIC,
                   N_jogada, tamanho_tabuleiro, jogada_conteudo, *Linha_jogada,
                   *orientacao_jogada, *Coluna_jogada, colunas_total,
                   linhas_total, dados, erros) == 1) {
-            contabilizacao_de_pontos(N_jogada, tamanho_tabuleiro,
+            contabilizacao_possivel_pontos(N_jogada, tamanho_tabuleiro,
                                      jogada_conteudo, *Linha_jogada,
                                      *orientacao_jogada, *Coluna_jogada,
                                      colunas_total, linhas_total, dados);
@@ -1507,16 +1547,20 @@ void analise_casas(char **casas_possiveis, int N_casas_total, int N_Colunas_DIC,
                 N_jogada, tamanho_tabuleiro, jogada_conteudo, *Linha_jogada,
                 *orientacao_jogada, *Coluna_jogada, colunas_total, linhas_total,
                 dados, &pontuacao_jogada, modo_de_jogo);
-            if (pontuacao_jogada >= 0.5 * pontuacao_jogada_Max) {
+                      if(registo_jogadas_ativo==1){
+                          if (pontuacao_jogada >= 0.5 * pontuacao_jogada_Max) {
               char *jogada_possivel =
                   cria_string(*Coluna_jogada, *orientacao_jogada, *Linha_jogada,
                               pontuacao_jogada, jogada_conteudo);
               Jogadas_Possiveis = Insere_jogada_possivel_array(
                   Jogadas_Possiveis, N_total_jogadas_possiveis, jogada_possivel,
                   N_jogada, N_jogada_array);
-            }
+                      }}
             if ((pontuacao_jogada) > pontuacao_jogada_Max) {
-              pontuacao_jogada_Max = (pontuacao_jogada);
+                for (int y=0; y<16; y++) {
+                   jogada_conteudo_Max[y]='\0';
+                }
+                pontuacao_jogada_Max = (pontuacao_jogada);
               Coluna_jogada_Max = (*Coluna_jogada);
               orientacao_jogada_Max = (*orientacao_jogada);
               Linha_jogada_Max = (*Linha_jogada);
@@ -1527,10 +1571,22 @@ void analise_casas(char **casas_possiveis, int N_casas_total, int N_Colunas_DIC,
                                             jogada_conteudo, *Linha_jogada,
                                             *orientacao_jogada, *Coluna_jogada,
                                             colunas_total, linhas_total, dados);
+                      *Coluna_jogada = casa[0];
+                      *Linha_jogada = (int)casa[1] - 96;
+                      *orientacao_jogada = casa[2];
+            
           }
+          else{remove_posivel_jogada_tabuleiro(N_jogada, tamanho_tabuleiro,
+                                               jogada_conteudo, *Linha_jogada,
+                                               *orientacao_jogada, *Coluna_jogada,
+                                               colunas_total, linhas_total, dados);
+                         *Coluna_jogada = casa[0];
+                         *Linha_jogada = (int)casa[1] - 96;
+                         *orientacao_jogada = casa[2];
+               }
         }
       }
-      printf("%s", jogada_conteudo_Max);
+
 
       if (*orientacao_jogada == 'v' || *orientacao_jogada == 'V') {
         int comprimento_da_palavra = strlen(jogada_conteudo);
@@ -1544,7 +1600,7 @@ void analise_casas(char **casas_possiveis, int N_casas_total, int N_Colunas_DIC,
                   N_jogada, tamanho_tabuleiro, jogada_conteudo, *Linha_jogada,
                   *orientacao_jogada, *Coluna_jogada, colunas_total,
                   linhas_total, dados, erros) == 1) {
-            contabilizacao_de_pontos(N_jogada, tamanho_tabuleiro,
+            contabilizacao_possivel_pontos(N_jogada, tamanho_tabuleiro,
                                      jogada_conteudo, *Linha_jogada,
                                      *orientacao_jogada, *Coluna_jogada,
                                      colunas_total, linhas_total, dados);
@@ -1552,100 +1608,123 @@ void analise_casas(char **casas_possiveis, int N_casas_total, int N_Colunas_DIC,
                 N_jogada, tamanho_tabuleiro, jogada_conteudo, *Linha_jogada,
                 *orientacao_jogada, *Coluna_jogada, colunas_total, linhas_total,
                 dados, &pontuacao_jogada, modo_de_jogo);
-            if (pontuacao_jogada >= 0.5 * pontuacao_jogada_Max) {
+                      if(registo_jogadas_ativo==1){
+                      if (pontuacao_jogada >= 0.5 * pontuacao_jogada_Max) {
               char *jogada_possivel =
                   cria_string(*Coluna_jogada, *orientacao_jogada, *Linha_jogada,
                               pontuacao_jogada, jogada_conteudo);
               Jogadas_Possiveis = Insere_jogada_possivel_array(
                   Jogadas_Possiveis, N_total_jogadas_possiveis, jogada_possivel,
                   N_jogada, N_jogada_array);
-            }
+                      }}
             if ((pontuacao_jogada) > pontuacao_jogada_Max) {
-              pontuacao_jogada_Max = (pontuacao_jogada);
+                for (int u=0; u<16; u++) {
+                   jogada_conteudo_Max[u]='\0';
+                }
+                pontuacao_jogada_Max = (pontuacao_jogada);
               Coluna_jogada_Max = (*Coluna_jogada);
               orientacao_jogada_Max = (*orientacao_jogada);
               Linha_jogada_Max = (*Linha_jogada);
               memcpy(jogada_conteudo_Max, jogada_conteudo,
                      strlen(jogada_conteudo));
             }
-          }
           remove_posivel_jogada_tabuleiro(N_jogada, tamanho_tabuleiro,
                                           jogada_conteudo, *Linha_jogada,
                                           *orientacao_jogada, *Coluna_jogada,
                                           colunas_total, linhas_total, dados);
+            *Coluna_jogada = casa[0];
+            *Linha_jogada = (int)casa[1] - 96;
+            *orientacao_jogada = casa[2];
         }
-      }
-    }
-  }
+          else{ remove_posivel_jogada_tabuleiro(N_jogada, tamanho_tabuleiro,
+                                               jogada_conteudo, *Linha_jogada,
+                                               *orientacao_jogada, *Coluna_jogada,
+                                               colunas_total, linhas_total, dados);
+                         *Coluna_jogada = casa[0];
+                         *Linha_jogada = (int)casa[1] - 96;
+              *orientacao_jogada = casa[2];
 
-(*Coluna_jogada) = Coluna_jogada_Max;
-(*orientacao_jogada) = orientacao_jogada_Max;
-(*Linha_jogada) = Linha_jogada_Max;
-memcpy(jogada_conteudo, jogada_conteudo_Max, strlen(jogada_conteudo_Max));
+          }
+               }
+      }
+        
+    }
+      }}
+    
+        for (int g=0; g<20; g++) {
+            if (g==strlen(jogada_conteudo_Max)) {
+                jogada_conteudo[g]='\t';
+            }
+            jogada_conteudo[g]='\0';}
+  (*Coluna_jogada) = Coluna_jogada_Max;
+  (*orientacao_jogada) = orientacao_jogada_Max;
+  (*Linha_jogada) = Linha_jogada_Max;
+  memcpy(jogada_conteudo, jogada_conteudo_Max, strlen(jogada_conteudo_Max));
+    return jogada_conteudo;
 }
 //  MAIN
 int main(int argc, char *argv[]) {
 
-      int tamanho_tabuleiro = 9, I = 0, colunas_total = 0, linhas_total = 0,
+  int tamanho_tabuleiro = 9, I = 0, colunas_total = 0, linhas_total = 0,
       linha_index_tabuleiro, coluna_index_tabuleiro, gameover = 0, N_jogada = 1;
-      int modo_de_jogo = 2;
-      int jogadamax;
-      int letrasrest;
-      char *File_letras="letras.txt";
-      char *File_dicionario="/home/public/Downloads/words.txt";
-      char *File_tabprev;
-      char *File_tabfinal;
-      char *File_registo;
+  int modo_de_jogo = 2;
+  int jogadamax;
+  int letrasrest;
+  char *File_letras = "letras.txt";
+  char *File_dicionario =
+      "/Users/pedro/Desktop/Curso/1ºano/2ºSemestre/Programação/Laboratorio/"
+      "Projecto/dicionarios-Linux/words.txt";
+  char *File_tabprev;
+  char *File_tabfinal;
+    char *File_registo=0;
 
+  int opt = 'h'; /* opção para getopt() */
 
-    int opt= 'h';    /* opção para getopt() */
+  /* processar as opções da linha de comando */
 
-    /* processar as opções da linha de comando */
+  /*Print arguments*/
+  for (int i = 0; i < argc; ++i) {
+    printf("argv[ %d ] = %s\n", i, argv[i]);
+  }
 
-    /*Print arguments*/
-    for( int i = 0; i < argc; ++i ) {
-        printf( "argv[ %d ] = %s\n", i, argv[ i ] );
+  /*debuggerprintf("dsds");*/
+  while ((opt = getopt(argc, argv, "h:t:d:l:m:n:i:j:o:r")) != -1) {
+    switch (opt) {
+    case 't':
+      /*validar*/ /* se houver erro, fica o valor por omissão */
+      tamanho_tabuleiro = optarg[0];
+      break;
+    case 'd':
+      strcpy(File_dicionario, optarg);
+      break;
+    case 'l':
+      strcpy(File_letras, optarg);
+      break;
+    case 'm':
+      sscanf(optarg, "%d", &letrasrest);
+      break;
+    case 'n':
+      sscanf(optarg, "%d", &jogadamax);
+      break;
+    case 'i':
+      strcpy(File_tabprev, optarg);
+      break;
+    case 'j':
+      sscanf(optarg, "%d", &modo_de_jogo);
+      break;
+    case 'o':
+      strcpy(File_tabfinal, optarg);
+      break;
+    case 'r':
+      strcpy(File_registo, optarg);
+      break;
+    case 'h': /* help */
+      help(argv[0]);
+      break;
+    default: /* '?' opções inválidas */
+      break;
     }
-
-    /*debuggerprintf("dsds");*/
-    while ((opt= getopt(argc, argv, "h:t:d:l:m:n:i:j:o:r")) != -1) {
-        switch (opt) {
-            case 't':
-               /*validar*/  /* se houver erro, fica o valor por omissão */
-                tamanho_tabuleiro=optarg[0];
-                break;
-            case 'd':
-                strcpy( File_dicionario,optarg);
-                break;
-            case 'l':
-                strcpy(File_letras,optarg );
-                break;
-            case 'm':
-                sscanf(optarg, "%d", &letrasrest);
-                break;
-            case 'n':
-                sscanf(optarg, "%d", &jogadamax);
-                break;
-            case 'i':
-                strcpy(File_tabprev,optarg );
-                break;
-            case 'j':
-                sscanf(optarg, "%d", &modo_de_jogo);
-                break;
-            case 'o':
-                strcpy(File_tabfinal,optarg );
-                break;
-            case 'r':
-                 strcpy(File_registo,optarg );
-                break;
-            case 'h': /* help */
-                help(argv[0]);
-                break;
-            default: /* '?' opções inválidas */
-                break;
-        }
-    }
-
+  }
 
   /*while (I == 0) {
     printf("Insira o tamanho do tabuleiro:\n");
@@ -1662,7 +1741,30 @@ int main(int argc, char *argv[]) {
   int Pontuacao_total = 0;
   linhas_total = tamanho_tabuleiro + 2;
   colunas_total = tamanho_tabuleiro + 3;
-  char dados[linhas_total][colunas_total][7];
+
+  char ***dados = (char ***)malloc(linhas_total * sizeof(char **));
+
+  if (dados == NULL) {
+    fprintf(stderr, "Out of memory");
+    exit(0);
+  }
+
+  for (int i = 0; i < linhas_total; i++) {
+    dados[i] = (char **)malloc(colunas_total * sizeof(char *));
+
+    if (dados[i] == NULL) {
+      fprintf(stderr, "Out of memory");
+      exit(0);
+    }
+
+    for (int j = 0; j < colunas_total; j++) {
+      dados[i][j] = (char *)malloc(7 * sizeof(char));
+      if (dados[i][j] == NULL) {
+        fprintf(stderr, "Out of memory");
+        exit(0);
+      }
+    }
+  }
   char erros[6] = {0};
   pre_formatacao(colunas_total, linhas_total, tamanho_tabuleiro, dados);
   gerar_tabuleiro(colunas_total, linhas_total, tamanho_tabuleiro, dados);
@@ -1753,7 +1855,8 @@ int main(int argc, char *argv[]) {
     // leitura do dicionario
     int N_Colunas_DIC = 0;
     char **Coluna_DIC = carregar_ficheiro(File_dicionario, &N_Colunas_DIC);
-
+      int registo_jogadas_ativo=0;
+      if(File_registo!=0){registo_jogadas_ativo=1;}
     int N_total_jogadas_possiveis = 0;
     int N_casas_total = 0;
     char **casas_possiveis = Criar_array_casas(&N_casas_total);
@@ -1767,134 +1870,15 @@ int main(int argc, char *argv[]) {
                    jogada_conteudo, tamanho_tabuleiro, pontuacao_jogada,
                    colunas_total, linhas_total, dados, modo_de_jogo,
                    casas_possiveis, &N_casas_total);
-      for (int i = 0; i < N_casas_total; i++) {
-        printf("\n%s\n", casas_possiveis[i]);
-      }
-char casa[4];
-
-  // melhor jogada
-  char Coluna_jogada_Max = 'c';
-  char orientacao_jogada_Max = 'h';
-  int Linha_jogada_Max = 0;
-  int pontuacao_jogada_Max = 0;
-  char jogada_conteudo_Max[15] = {0};
-  jogada_conteudo = (char *)malloc((16) * sizeof(char));
-
-  for (int x = 0; x < N_Colunas_DIC - 1; x++) {
-
-    for (int i = 0; i < N_casas_total + 1; i++) {
-      memcpy(casa, casas_possiveis[i], 3);
-      printf("%s\n", casas_possiveis[i]);
-      Coluna_jogada = casa[0];
-      Linha_jogada = (int)casa[1] - 96;
-      orientacao_jogada = casa[2];
-
-      if (orientacao_jogada == 'h' || orientacao_jogada == 'H') {
-        int comprimento_da_palavra = strlen(Coluna_DIC[x]);
-        for (int b = 0; b < comprimento_da_palavra; b++) {
-          Coluna_jogada = Coluna_jogada - b;
-          Insere_possivel_jogada_tabuleiro(N_jogada, tamanho_tabuleiro,
-                                           Coluna_DIC[x], Linha_jogada,
-                                           orientacao_jogada, Coluna_jogada,
-                                           colunas_total, linhas_total, dados);
-          if (validacao_possivel_da_jogada(
-                  N_jogada, tamanho_tabuleiro, Coluna_DIC[x], Linha_jogada,
-                  orientacao_jogada, Coluna_jogada, colunas_total,
-                  linhas_total, dados, erros) == 1) {
-            contabilizacao_de_pontos(N_jogada, tamanho_tabuleiro,
-                                     Coluna_DIC[x], Linha_jogada,
-                                     orientacao_jogada, Coluna_jogada,
-                                     colunas_total, linhas_total, dados);
-            pontuacao_jogada_possivel(
-                N_jogada, tamanho_tabuleiro,Coluna_DIC[x], Linha_jogada,
-                orientacao_jogada, Coluna_jogada, colunas_total, linhas_total,
-                dados, &pontuacao_jogada, modo_de_jogo);
-            if (pontuacao_jogada >= 0.5 * pontuacao_jogada_Max) {
-              char *jogada_possivel =
-                  cria_string(Coluna_jogada, orientacao_jogada, Linha_jogada,
-                              pontuacao_jogada, Coluna_DIC[x]);
-              Jogadas_Possiveis = Insere_jogada_possivel_array(
-                  Jogadas_Possiveis, &N_total_jogadas_possiveis, jogada_possivel,
-                  N_jogada, &N_jogada_array);
-            }
-            if ((pontuacao_jogada) > pontuacao_jogada_Max) {
-              pontuacao_jogada_Max = (pontuacao_jogada);
-              Coluna_jogada_Max = (Coluna_jogada);
-              orientacao_jogada_Max = (orientacao_jogada);
-              Linha_jogada_Max = (Linha_jogada);
-              memcpy(jogada_conteudo_Max, Coluna_DIC[x],
-                     strlen(Coluna_DIC[x]));
-            }
-            remove_posivel_jogada_tabuleiro(N_jogada, tamanho_tabuleiro,
-                                           Coluna_DIC[x], Linha_jogada,
-                                            orientacao_jogada, Coluna_jogada,
-                                            colunas_total, linhas_total, dados);
-          }
-        }
-      }
-      printf("%s", jogada_conteudo_Max);
-      printf("1111");
-
-      if (orientacao_jogada == 'v' || orientacao_jogada == 'V') {
-        int comprimento_da_palavra = strlen(Coluna_DIC[x]);
-        for (int b = 0; b < comprimento_da_palavra; b++) {
-          Linha_jogada = Linha_jogada - b;
-          Insere_possivel_jogada_tabuleiro(N_jogada, tamanho_tabuleiro,
-                                           Coluna_DIC[x], Linha_jogada,
-                                           orientacao_jogada, Coluna_jogada,
-                                           colunas_total, linhas_total, dados);
-          if (validacao_possivel_da_jogada(
-                  N_jogada, tamanho_tabuleiro, Coluna_DIC[x], Linha_jogada,
-                  orientacao_jogada, Coluna_jogada, colunas_total,
-                  linhas_total, dados, erros) == 1) {
-            contabilizacao_de_pontos(N_jogada, tamanho_tabuleiro,
-                                     Coluna_DIC[x], Linha_jogada,
-                                     orientacao_jogada, Coluna_jogada,
-                                     colunas_total, linhas_total, dados);
-            pontuacao_jogada_possivel(
-                N_jogada, tamanho_tabuleiro, Coluna_DIC[x], Linha_jogada,
-                orientacao_jogada, Coluna_jogada, colunas_total, linhas_total,
-                dados, &pontuacao_jogada, modo_de_jogo);
-            if (pontuacao_jogada >= 0.5 * pontuacao_jogada_Max) {
-              char *jogada_possivel =
-                  cria_string(Coluna_jogada, orientacao_jogada, Linha_jogada,
-                              pontuacao_jogada, Coluna_DIC[x]);
-              Jogadas_Possiveis = Insere_jogada_possivel_array(
-                  Jogadas_Possiveis, &N_total_jogadas_possiveis, jogada_possivel,
-                  N_jogada, &N_jogada_array);
-            }
-            if ((pontuacao_jogada) > pontuacao_jogada_Max) {
-              pontuacao_jogada_Max = (pontuacao_jogada);
-              Coluna_jogada_Max = (Coluna_jogada);
-              orientacao_jogada_Max = (orientacao_jogada);
-              Linha_jogada_Max = (Linha_jogada);
-              memcpy(jogada_conteudo_Max, Coluna_DIC[x],
-                     strlen(jogada_conteudo));
-            }
-          }
-          remove_posivel_jogada_tabuleiro(N_jogada, tamanho_tabuleiro,
-                                          Coluna_DIC[x], Linha_jogada,
-                                          orientacao_jogada, Coluna_jogada,
-                                          colunas_total, linhas_total, dados);
-        }
-      }
-    }
-  }
-printf("2222");
-(Coluna_jogada) = Coluna_jogada_Max;
-(orientacao_jogada) = orientacao_jogada_Max;
-(Linha_jogada) = Linha_jogada_Max;
-memcpy(jogada_conteudo, jogada_conteudo_Max, strlen(jogada_conteudo_Max));
-
-      /*analise_casas(casaspossiveis, N_casas_total, N_Colunas_DIC, Coluna_DIC,
+      jogada_conteudo=analise_casas(casas_possiveis, N_casas_total, N_Colunas_DIC, Coluna_DIC,
                     &N_total_jogadas_possiveis, Jogadas_Possiveis, N_jogada,
                     tamanho_tabuleiro, jogada_conteudo, &Linha_jogada,
                     &orientacao_jogada, &Coluna_jogada, colunas_total,
-                    linhas_total, dados, erros, modo_de_jogo, &N_jogada_array);*/
+                    linhas_total, dados, erros, modo_de_jogo, &N_jogada_array,registo_jogadas_ativo);
       Insere_jogada_tabuleiro(N_jogada, tamanho_tabuleiro, jogada_conteudo,
                               Linha_jogada, orientacao_jogada, Coluna_jogada,
                               colunas_total, linhas_total, dados);
-      printf("\n%d Jogada:\n", N_jogada);
+      printf("\n%dº Jogada:\n", N_jogada);
       imprimir_tabuleiro(colunas_total, linhas_total, dados);
       contabilizacao_de_pontos(N_jogada, tamanho_tabuleiro, jogada_conteudo,
                                Linha_jogada, orientacao_jogada, Coluna_jogada,
@@ -1909,27 +1893,27 @@ memcpy(jogada_conteudo, jogada_conteudo_Max, strlen(jogada_conteudo_Max));
       printf("    Pontuacao total: %d\n", Pontuacao_total);
       N_jogada++;
       gameover = 0;
-      if (N_jogada==jogadamax) {
+      if (N_jogada == jogadamax) {
         gameover = 1;
       }
     }
+      for (int w=0; w<N_total_jogadas_possiveis; w++) {
+         printf("%s", Jogadas_Possiveis[w]);
+      }
   }
   if (modo_de_jogo == 3) {
-    printf("%s",File_dicionario);
+    printf("%s", File_dicionario);
     int N_Colunas_DIC = 0;
     char **Coluna_DIC = carregar_ficheiro(File_dicionario, &N_Colunas_DIC);
- for(int i=0;i<N_Colunas_DIC;i++){
+    for (int i = 0; i < N_Colunas_DIC; i++) {
 
-        printf("%s\n",Coluna_DIC[i]);
+      printf("%s\n", Coluna_DIC[i]);
     }
-    printf("%s",Coluna_DIC[5]);
-    printf("%d",strlen(Coluna_DIC[5]));
+    printf("%s", Coluna_DIC[5]);
+    printf("%d", strlen(Coluna_DIC[5]));
     char *jogada_conteudo;
-
-
-    }
   }
-
+}
 
 /* RASCUNHO:
  criar array multidimensional que tem os dados todos do jogo, o que
@@ -2034,4 +2018,121 @@ posicao no tabuleiro)
 for (int i = 0; i < N_Colunas_DIC; i++) {
  printf("%s\n", Coluna_DIC[i]);
 
+
+ char casa[4];
+
+   // melhor jogada
+   char Coluna_jogada_Max = 'c';
+   char orientacao_jogada_Max = 'h';
+   int Linha_jogada_Max = 0;
+   int pontuacao_jogada_Max = 0;
+   char jogada_conteudo_Max[15] = {0};
+   jogada_conteudo = (char *)malloc((16) * sizeof(char));
+
+   for (int x = 0; x < N_Colunas_DIC - 1; x++) {
+
+     for (int i = 0; i < N_casas_total + 1; i++) {
+
+
+
+       if (orientacao_jogada == 'h' || orientacao_jogada == 'H') {
+         int comprimento_da_palavra = strlen(Coluna_DIC[x]);
+         for (int b = 0; b < comprimento_da_palavra; b++) {
+           Coluna_jogada = Coluna_jogada - b;
+           Insere_possivel_jogada_tabuleiro(N_jogada, tamanho_tabuleiro,
+                                            Coluna_DIC[x],
+(int)(casas_possiveis[i][1]) - 96,casas_possiveis[i][2],casas_possiveis[i][0],
+                                            colunas_total, linhas_total, dados);
+           if (validacao_possivel_da_jogada(
+                   N_jogada, tamanho_tabuleiro, Coluna_DIC[x],
+(int)(casas_possiveis[i][1]) - 96,casas_possiveis[i][2],casas_possiveis[i][0],
+colunas_total, linhas_total, dados, erros) == 1) {
+             contabilizacao_de_pontos(N_jogada, tamanho_tabuleiro,
+                                      Coluna_DIC[x],
+(int)(casas_possiveis[i][1]) - 96,casas_possiveis[i][2],casas_possiveis[i][0],
+                                      colunas_total, linhas_total, dados);
+             pontuacao_jogada_possivel(
+                 N_jogada, tamanho_tabuleiro,Coluna_DIC[x],
+(int)(casas_possiveis[i][1]) - 96,casas_possiveis[i][2],casas_possiveis[i][0],
+colunas_total, linhas_total, dados, &pontuacao_jogada, modo_de_jogo); if
+(pontuacao_jogada >= 0.5 * pontuacao_jogada_Max) { char *jogada_possivel =
+                   cria_string(
+casas_possiveis[i][2],casas_possiveis[i][0],(int)(casas_possiveis[i][1]) - 96,
+                               pontuacao_jogada, Coluna_DIC[x]);
+               Jogadas_Possiveis = Insere_jogada_possivel_array(
+                   Jogadas_Possiveis, &N_total_jogadas_possiveis,
+jogada_possivel, N_jogada, &N_jogada_array);
+             }
+             if ((pontuacao_jogada) > pontuacao_jogada_Max) {
+               pontuacao_jogada_Max = (pontuacao_jogada);
+               Coluna_jogada_Max = (casas_possiveis[i][0]);
+               orientacao_jogada_Max = (casas_possiveis[i][2]);
+               Linha_jogada_Max = ((int)(casas_possiveis[i][1]) - 96);
+               memcpy(jogada_conteudo_Max, Coluna_DIC[x],
+                      strlen(Coluna_DIC[x]));
+             }
+             remove_posivel_jogada_tabuleiro(N_jogada, tamanho_tabuleiro,
+                                            Coluna_DIC[x],
+(int)(casas_possiveis[i][1]) - 96,casas_possiveis[i][2],casas_possiveis[i][0],
+                                             colunas_total, linhas_total,
+dados);
+           }
+         }
+       }
+       printf("%s", jogada_conteudo_Max);
+       printf("1111");
+
+       if (orientacao_jogada == 'v' || orientacao_jogada == 'V') {
+         int comprimento_da_palavra = strlen(Coluna_DIC[x]);
+         for (int b = 0; b < comprimento_da_palavra; b++) {
+           Linha_jogada = Linha_jogada - b;
+           Insere_possivel_jogada_tabuleiro(N_jogada, tamanho_tabuleiro,
+                                            Coluna_DIC[x],
+(int)(casas_possiveis[i][1]) - 96,casas_possiveis[i][2],casas_possiveis[i][0],
+                                            colunas_total, linhas_total, dados);
+           if (validacao_possivel_da_jogada(
+                   N_jogada, tamanho_tabuleiro, Coluna_DIC[x],
+((int)(casas_possiveis[i][1]) - 96),casas_possiveis[i][2],casas_possiveis[i][0],
+colunas_total, linhas_total, dados, erros) == 1) {
+             contabilizacao_de_pontos(N_jogada, tamanho_tabuleiro,
+                                      Coluna_DIC[x],
+((int)(casas_possiveis[i][1]) - 96),casas_possiveis[i][2],casas_possiveis[i][0],
+                                      colunas_total, linhas_total, dados);
+             pontuacao_jogada_possivel(
+                 N_jogada, tamanho_tabuleiro, Coluna_DIC[x],
+(int)(casas_possiveis[i][1]) - 96,casas_possiveis[i][2],casas_possiveis[i][0],
+colunas_total, linhas_total, dados, &pontuacao_jogada, modo_de_jogo); if
+(pontuacao_jogada >= 0.5 * pontuacao_jogada_Max) { char *jogada_possivel =
+                   cria_string(
+casas_possiveis[i][2],casas_possiveis[i][0],(int)(casas_possiveis[i][1]) - 96,
+                               pontuacao_jogada, Coluna_DIC[x]);
+               Jogadas_Possiveis = Insere_jogada_possivel_array(
+                   Jogadas_Possiveis, &N_total_jogadas_possiveis,
+jogada_possivel, N_jogada, &N_jogada_array);
+             }
+             if ((pontuacao_jogada) > pontuacao_jogada_Max) {
+               pontuacao_jogada_Max = (pontuacao_jogada);
+               Coluna_jogada_Max = (casas_possiveis[i][0]);
+             orientacao_jogada_Max = (casas_possiveis[i][2]);
+             Linha_jogada_Max = ((int)(casas_possiveis[i][1]) - 96);
+               memcpy(jogada_conteudo_Max, Coluna_DIC[x],
+                      strlen(jogada_conteudo));
+             }
+           }
+           remove_posivel_jogada_tabuleiro(N_jogada, tamanho_tabuleiro,
+                                           Coluna_DIC[x],
+(int)(casas_possiveis[i][1]) - 96,casas_possiveis[i][2],casas_possiveis[i][0],
+                                           colunas_total, linhas_total, dados);
+         }
+       }
+     }
+   }
+ printf("2222");
+ (Coluna_jogada) = Coluna_jogada_Max;
+ (orientacao_jogada) = orientacao_jogada_Max;
+ (Linha_jogada) = Linha_jogada_Max;
+ memcpy(jogada_conteudo, jogada_conteudo_Max, strlen(jogada_conteudo_Max));
+
+
  */
+
